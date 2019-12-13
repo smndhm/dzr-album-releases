@@ -3,12 +3,8 @@
     <div class="hero">
       <div class="hero-body">
         <div class="container is-fluid">
-          <h1 class="title">
-            Deezer Album Releases
-          </h1>
-          <h2 class="subtitle">
-            Get your favorite artists albums releases
-          </h2>
+          <h1 class="title">Deezer Album Releases</h1>
+          <h2 class="subtitle">Get your favorite artists albums releases</h2>
         </div>
       </div>
     </div>
@@ -31,12 +27,18 @@
 export default {
   name: "Login",
   methods: {
-    login: () => {
+    login() {
       DZ.login(
         login => {
-          console.log("dzConnect", login);
+          console.log("DZ.login", login);
           if (login.authResponse.accessToken) {
-            // getAlbumReleases();
+            localStorage.accessToken = JSON.stringify({
+              token: login.authResponse.accessToken,
+              expire: Math.floor(
+                login.authInitDate / 1000 + login.authResponse.expire
+              )
+            });
+            this.$router.push("/");
           }
         },
         { perms: "basic_access" }
