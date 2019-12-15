@@ -5,6 +5,22 @@ import router from "./router";
 
 Vue.config.productionTip = false;
 
+const setAccessToken = accessToken => {
+  localStorage.accessToken = JSON.stringify({
+    token: accessToken.authResponse.accessToken,
+    expire: Math.floor(
+      accessToken.authInitDate / 1000 + accessToken.authResponse.expire
+    )
+  });
+  router.push("/");
+};
+
+Vue.mixin({
+  methods: {
+    setAccessToken
+  }
+});
+
 new Vue({
   router,
   render: h => h(App)
@@ -30,4 +46,15 @@ DZ.init({
       console.log("DZ.init", response);
     }
   }
+});
+
+/**
+ * Deezer SDK Ready
+ */
+DZ.ready(sdkOptions => {
+  console.log("DZ.ready", sdkOptions);
+  DZ.getLoginStatus(loginStatus => {
+    console.log("DZ.getLoginStatus", loginStatus);
+    setAccessToken(loginStatus);
+  });
 });

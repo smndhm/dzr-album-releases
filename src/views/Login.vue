@@ -22,7 +22,6 @@
 </template>
 
 <script>
-/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "[dz]" }]*/
 /*global DZ*/
 export default {
   name: "Login",
@@ -32,13 +31,7 @@ export default {
         login => {
           console.log("DZ.login", login);
           if (login.authResponse.accessToken) {
-            localStorage.accessToken = JSON.stringify({
-              token: login.authResponse.accessToken,
-              expire: Math.floor(
-                login.authInitDate / 1000 + login.authResponse.expire
-              )
-            });
-            this.$router.push("/");
+            this.setAccessToken(login);
           }
         },
         { perms: "basic_access" }

@@ -38,9 +38,7 @@ router.beforeEach((to, from, next) => {
       next("/login");
     } else if (!expired && to.name === "login") {
       next("/");
-    } else {
-      next();
-    }
+    } else next();
   } else next();
 });
 
