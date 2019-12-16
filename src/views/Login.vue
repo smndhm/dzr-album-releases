@@ -29,9 +29,14 @@ export default {
     login() {
       DZ.login(
         login => {
-          console.log("DZ.login", login);
           if (login.authResponse.accessToken) {
-            this.setAccessToken(login);
+            localStorage.accessToken = JSON.stringify({
+              token: login.authResponse.accessToken,
+              expire: Math.floor(
+                login.authInitDate / 1000 + login.authResponse.expire
+              )
+            });
+            this.$router.push("/");
           }
         },
         { perms: "basic_access" }
