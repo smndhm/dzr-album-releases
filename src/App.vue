@@ -22,8 +22,8 @@ export default {
           document.location.protocol +
           "//" +
           document.location.host +
-          document.location.pathname +
-          "/channel.html",
+          document.location.pathname.replace("login", "") +
+          "channel.html",
         player: {
           onload: dzInit => {
             console.log("DZ.init", dzInit);
