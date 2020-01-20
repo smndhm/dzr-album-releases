@@ -1,5 +1,5 @@
 <template>
-  <section id="dzr-album-releases">
+  <section id="dzr-album-releases" class="section">
     <router-view />
   </section>
 </template>
@@ -25,7 +25,9 @@ export default {
           document.location.pathname +
           "channel.html",
         player: {
-          onload: () => {}
+          onload: dzInit => {
+            console.log("DZ.init", dzInit);
+          }
         }
       });
     }
@@ -37,5 +39,16 @@ export default {
 </script>
 
 <style lang="scss">
+$link: hsl(0, 0%, 4%);
+$link-hover: hsl(217, 71%, 53%);
+
 @import "bulma";
+
+.tag {
+  &.is-loading {
+    &:after {
+      @include loader;
+    }
+  }
+}
 </style>
