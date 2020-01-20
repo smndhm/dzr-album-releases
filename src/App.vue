@@ -23,7 +23,7 @@ export default {
           "//" +
           document.location.host +
           document.location.pathname +
-          "channel.html",
+          "/channel.html",
         player: {
           onload: dzInit => {
             console.log("DZ.init", dzInit);
