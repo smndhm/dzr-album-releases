@@ -1,43 +1,15 @@
 <template>
-  <div
-    class="release-date box"
-    v-bind:class="{ 'has-background-light': isItToday(date) }"
-  >
-    <h3 class="moment title is-6">{{ date | moment }}</h3>
+  <article class="release-date" :class="{ today: releasedSince(date) === 0 }">
+    <h3>
+      <time class="date" :datetime="date">{{ moment(date) }}</time>
+    </h3>
     <div class="albums">
-      <album v-for="album in albums" :key="album.id" v-bind:album="album" />
+      <album v-for="album in albums" :key="album.id" :album="album" />
     </div>
-  </div>
+  </article>
 </template>
 
 <script>
-import moment from "moment";
-
-moment.updateLocale("en", {
-  calendar: {
-    sameDay: "[Today]",
-    nextDay: "[Tomorrow]",
-    nextWeek: "dddd",
-    lastDay: "[Yesterday]",
-    lastWeek: "[Last] dddd",
-    sameElse: "dddd Do MMMM YYYY"
-  }
-});
-
-moment.updateLocale("fr", {
-  calendar: {
-    sameDay: "[Aujourd'hui]",
-    nextDay: "[Demain]",
-    nextWeek: "dddd",
-    lastDay: "[Hier]",
-    lastWeek: "dddd [dernier]",
-    sameElse: "dddd Do MMMM YYYY"
-  }
-});
-
-const locale = window.navigator.userLanguage || window.navigator.language;
-moment.locale(locale);
-
 import Album from "@/components/Album.vue";
 
 export default {
@@ -46,15 +18,48 @@ export default {
     albums: Array,
     date: String
   },
+  data() {
+    return {
+      locale: window.navigator.userLanguage || window.navigator.language,
+      releasedAround: 7,
+      observer: null
+    };
+  },
   methods: {
-    isItToday(date) {
-      return moment().diff(date, "days") === 0;
+    releasedSince(date) {
+      return Math.round(
+        (new Date(date) - new Date().setHours(0, 0, 0, 0)) /
+          (1000 * 60 * 60 * 24)
+      );
+    },
+    moment(date) {
+      const releasedSince = this.releasedSince(date);
+      return releasedSince >= this.releasedAround ||
+        releasedSince <= -this.releasedAround
+        ? new Intl.DateTimeFormat(this.locale, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          }).format(Date.parse(date))
+        : new Intl.RelativeTimeFormat(this.locale, { numeric: "auto" }).format(
+            releasedSince,
+            "day"
+          );
     }
   },
-  filters: {
-    moment: function(date) {
-      return moment(date).calendar();
-    }
+  mounted() {
+    // create observer
+    this.observer = new IntersectionObserver(([{ target, isIntersecting }]) => {
+      if (isIntersecting) {
+        this.$emit("intersect", target.querySelector("time").dateTime);
+        this.observer.disconnect();
+      }
+    });
+    this.observer.observe(this.$el);
+  },
+  destroyed() {
+    this.observer.disconnect();
   },
   components: {
     Album
@@ -62,22 +67,30 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .release-date {
-  animation: append-release 0.4s ease;
-}
-.release-date .moment::first-letter {
-  text-transform: uppercase;
-}
-// Animation
-@keyframes append-release {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
+  // Animation
+  animation: append-item 0.4s ease;
+  h3 {
+    font-size: 1.6rem;
+    &::first-letter {
+      text-transform: uppercase;
+    }
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
+  .albums {
+    // Display
+    display: flex;
+    align-items: flex-start;
+    margin-left: calc(-1 * var(--margin));
+    margin-right: calc(-1 * var(--margin));
+
+    // Removing scrollbar
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 </style>

@@ -1,23 +1,13 @@
 <template>
-  <div id="login" class="has-text-centered">
-    <div class="hero">
-      <div class="hero-body">
-        <div class="container is-fluid">
-          <h1 class="title">Deezer Album Releases</h1>
-          <h2 class="subtitle">Get your favorite artists albums releases</h2>
-        </div>
-      </div>
-    </div>
-    <p class="subtitle is-6 is-spaced">
+  <div id="login">
+    <div id="dz-root"></div>
+    <h1>Deezer Album Releases</h1>
+    <h2>Get your favorite artists albums releases</h2>
+    <p>
       Connect to your Deezer account to get your favorite artists albums
-      releases
+      releases.
     </p>
-    <button
-      class="button is-link is-light is-large is-rounded"
-      v-on:click="login"
-    >
-      Connect to Deezer
-    </button>
+    <button role="button" @click="login">Connect to Deezer</button>
   </div>
 </template>
 
@@ -28,20 +18,41 @@ export default {
   methods: {
     login() {
       DZ.login(
-        login => {
-          if (login.authResponse.accessToken) {
+        ({ authResponse, authInitDate }) => {
+          if (authResponse.accessToken) {
             localStorage.accessToken = JSON.stringify({
-              token: login.authResponse.accessToken,
-              expire: Math.floor(
-                login.authInitDate / 1000 + login.authResponse.expire
-              )
+              token: authResponse.accessToken,
+              expire: Math.floor(authInitDate / 1000 + authResponse.expire)
             });
             this.$router.push("/");
           }
         },
         { perms: "basic_access" }
       );
+    },
+    init() {
+      /* Init Deezer SDK */
+      DZ.init({
+        appId: this.getAppId,
+        channelUrl: `${document.location.origin}${document.location.pathname}channel.html`,
+        player: {
+          onload: dzInit => {
+            console.log("DZ.init", dzInit); // eslint-disable-line no-console
+          }
+        }
+      });
     }
+  },
+  mounted() {
+    window.dzAsyncInit = () => {
+      this.init();
+    };
+    (() => {
+      var e = document.createElement("script");
+      e.src = "https://e-cdns-files.dzcdn.net/js/min/dz.js";
+      e.async = true;
+      document.getElementById("dz-root").appendChild(e);
+    })();
   }
 };
 </script>
