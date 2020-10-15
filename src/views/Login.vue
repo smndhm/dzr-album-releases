@@ -2,10 +2,9 @@
   <div id="login">
     <div id="dz-root"></div>
     <h1>Deezer Album Releases</h1>
-    <h2>Get your favorite artists albums releases</h2>
+    <h2>Get your favorite artist album releases</h2>
     <p>
-      Connect to your Deezer account to get your favorite artists albums
-      releases.
+      Connect to your Deezer account to get your favorite artist album releases.
     </p>
     <button role="button" @click="login">Connect to Deezer</button>
   </div>
