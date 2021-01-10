@@ -71,6 +71,9 @@ export default {
 .release-date {
   // Animation
   animation: append-item 0.4s ease;
+  // Scroll snap
+  scroll-snap-align: start;
+
   h3 {
     font-size: 1.6rem;
     &::first-letter {
@@ -91,6 +94,9 @@ export default {
     &::-webkit-scrollbar {
       display: none;
     }
+
+    //Scroll snap
+    scroll-snap-type: x;
   }
 }
 </style>

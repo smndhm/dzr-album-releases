@@ -148,6 +148,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#releases {
+  scroll-snap-type: y;
+}
 #progress-bar {
   z-index: 1;
   position: fixed;
