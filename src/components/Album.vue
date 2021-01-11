@@ -68,8 +68,6 @@ export default {
   padding-right: var(--margin);
   // Animation
   animation: append-item 0.4s ease;
-  //Scroll snap
-  scroll-snap-align: start;
 
   .album-cover {
     position: relative;
